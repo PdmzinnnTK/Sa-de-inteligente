@@ -1,13 +1,253 @@
-<div class="minha-secao">
-    <h2>Minha Seção</h2>
-    <p>Este é um parágrafo dentro da minha seção.</p>
-  </div>
-  
-  
-  
 
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saúde Inteligente</title>
+  <meta name="description" content="Serviços de saúde preventiva e acompanhamento digital - Saúde Inteligente." />
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+  <style>
+    :root{
+      --bg:#f6fbfb;
+      --card:#ffffff;
+      --primary:#0b8f82;
+      --muted:#6b7280;
+      --shadow: 0 6px 18px rgba(11,143,130,0.08);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f1724;line-height:1.5}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
 
-<head><center><h1> Saúde Inteligente</h1></center><style>Small caps</style>
-<center><img src="Saudeinteligente.png" alt="Logotipo de uma Empresa"></center>
+    /* Header */
+    header{background:linear-gradient(90deg, rgba(11,143,130,0.06), transparent);backdrop-filter:saturate(120%);}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand strong{font-size:18px}
+    nav ul{display:flex;gap:16px;margin:0;padding:0;list-style:none}
+    nav a{color:var(--muted);text-decoration:none;font-weight:600}
+    .cta{background:var(--primary);color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700}
+    .menu-toggle{display:none;border:0;background:none}
 
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;padding:40px 0}
+    .hero h1{font-size:34px;margin:0 0 12px}
+    .hero p{color:var(--muted);margin:0 0 20px}
+    .card{background:var(--card);padding:20px;border-radius:12px;box-shadow:var(--shadow)}
+
+    /* Features */
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+    .feature{padding:18px;border-radius:10px;background:linear-gradient(180deg,#fff, #fbfdfc);border:1px solid rgba(11,143,130,0.04)}
+    .feature h3{margin:8px 0 4px}
+    .feature p{margin:0;color:var(--muted);font-size:14px}
+
+    /* Services & contact */
+    .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:28px 0}
+
+    /* Testimonials */
+    .testimonials{margin:20px 0}
+    .testimonials .item{padding:18px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);margin-bottom:12px}
+
+    footer{padding:28px 0;color:var(--muted);font-size:14px}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr;}
+      .features{grid-template-columns:repeat(2,1fr)}
+      .grid-two{grid-template-columns:1fr}
+      nav ul{display:none}
+      .menu-toggle{display:inline-block}
+    }
+    @media (max-width:520px){
+      .features{grid-template-columns:1fr}
+      .hero h1{font-size:26px}
+    }
+
+    /* Accessibility helpers */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* Form styles */
+    form input, form textarea, form select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef0;background:#fbfdfc}
+    form label{display:block;margin-bottom:6px;font-weight:600}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:0;background:var(--primary);color:#fff;font-weight:700;text-decoration:none}
+    .success{display:none;padding:10px;border-radius:8px;background:#ecfdf6;color:#064e3b;margin-top:12px}
+  </style>
 </head>
+<body>
+  <header>
+    <div class="container nav" role="banner">
+      <div class="brand">
+        <svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="1" y="1" width="22" height="22" rx="6" fill="var(--primary)" />
+          <path d="M7 12a5 5 0 0 1 10 0v3h-2v-3a3 3 0 0 0-6 0v6H7v-6z" fill="#fff" opacity="0.95"/>
+        </svg>
+        <div>
+          <div style="font-size:12px;color:var(--muted)">Plataforma</div>
+          <strong>Saúde Inteligente</strong>
+        </div>
+      </div>
+
+      <nav aria-label="Menu principal">
+        <button class="menu-toggle" aria-expanded="false" aria-controls="menu" id="menuBtn">☰</button>
+        <ul id="menu">
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#contato">Contato</a></li>
+          <li><a class="cta" href="#agendar">Agendar</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="hero">
+      <div>
+        <h1>Cuide da sua saúde com tecnologia e atenção humana</h1>
+        <p>Consultas, monitoramento remoto, lembretes de medicação e planos personalizados — tudo em um só lugar para você viver melhor.</p>
+        <div style="display:flex;gap:12px;align-items:center">
+          <a class="btn" href="#agendar">Comece agora</a>
+          <a href="#sobre" style="text-decoration:none;color:var(--muted);font-weight:700">Saiba mais →</a>
+        </div>
+
+        <div class="features" aria-hidden="false">
+          <div class="feature">
+            <strong>Monitoramento contínuo</strong>
+            <p>Integração com dispositivos e relatórios periódicos para você e seu médico.</p>
+          </div>
+          <div class="feature">
+            <strong>Planos personalizados</strong>
+            <p>Programas de prevenção e acompanhamento adaptados ao seu perfil.</p>
+          </div>
+          <div class="feature">
+            <strong>Equipe multidisciplinar</strong>
+            <p>Médicos, nutricionistas e psicólogos atuando de forma coordenada.</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="card" aria-labelledby="card-title">
+        <h2 id="card-title">Perfil do Paciente</h2>
+        <p style="color:var(--muted);font-size:14px">Acompanhe seus sinais vitais, histórico de consultas e mensagens com sua equipe de saúde.</p>
+
+        <dl style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px"><dt>Última consulta</dt><dd style="color:var(--muted)">12/09/2025</dd></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px"><dt>Próxima medição</dt><dd style="color:var(--muted)">24/10/2025</dd></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px"><dt>Plano</dt><dd style="color:var(--muted)">Prevenção Cardíaca</dd></div>
+        </dl>
+
+        <a class="cta" href="#contato" style="display:inline-block;margin-top:12px">Falar com equipe</a>
+      </aside>
+    </section>
+
+    <section id="servicos" class="card" style="margin-top:22px">
+      <h2>Serviços</h2>
+      <p style="color:var(--muted)">Soluções pensadas para diferentes necessidades de saúde — pessoa física, empresas e clínicas parceiras.</p>
+
+      <div class="grid-two">
+        <div>
+          <h3>Telemedicina</h3>
+          <p style="color:var(--muted)">Consultas online com agendamento rápido e prontuário integrado.</p>
+
+          <h3 style="margin-top:18px">Monitoramento remoto</h3>
+          <p style="color:var(--muted)">Envio automático de dados e alertas em caso de anomalias.</p>
+        </div>
+
+        <div>
+          <h3>Programas de prevenção</h3>
+          <p style="color:var(--muted)">Atividades educativas, planos de dieta e exercícios com acompanhamento.</p>
+
+          <h3 style="margin-top:18px">Integração para empresas</h3>
+          <p style="color:var(--muted)">Soluções de saúde ocupacional e bem-estar para seus colaboradores.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <h2>O que nossos usuários dizem</h2>
+      <div class="item card">
+        <p>"A equipe é muito atenciosa e o app me ajudou a controlar minha pressão. Recomendo!"</p>
+        <small style="color:var(--muted)">— Ana, 45 anos</small>
+      </div>
+      <div class="item card">
+        <p>"Facilitou o contato com o médico e os lembretes de medicação são muito úteis."</p>
+        <small style="color:var(--muted)">— João, 52 anos</small>
+      </div>
+    </section>
+
+    <section id="contato" class="card" style="margin-top:22px">
+      <h2 id="agendar">Fale conosco / Agende uma avaliação</h2>
+      <form id="contactForm" aria-labelledby="agendar">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" type="text" required aria-required="true" />
+          </div>
+          <div>
+            <label for="telefone">Telefone</label>
+            <input id="telefone" name="telefone" type="tel" required />
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required />
+        </div>
+
+        <div style="margin-top:12px">
+          <label for="mensagem">Mensagem / Observações</label>
+          <textarea id="mensagem" name="mensagem" rows="4"></textarea>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
+          <button class="btn" type="submit">Enviar</button>
+          <div class="success" id="successMsg" role="status">Obrigado! Recebemos sua solicitação. Em breve entraremos em contato.</div>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <footer class="container" role="contentinfo">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <div>
+        <strong>Saúde Inteligente</strong>
+        <div style="color:var(--muted)">© 2025 • Todos os direitos reservados</div>
+      </div>
+      <div style="color:var(--muted)">Contato: contato@saudeinteligente.exemplo</div>
+    </div>
+  </footer>
+
+  <script>
+    // Menu toggle for small screens
+    const menuBtn = document.getElementById('menuBtn');
+    const menu = document.getElementById('menu');
+    menuBtn && menuBtn.addEventListener('click', () => {
+      const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', String(!expanded));
+      if(menu.style.display === 'flex') menu.style.display = 'none';
+      else menu.style.display = 'flex';
+      menu.style.flexDirection = 'column';
+      menu.style.gap = '12px';
+      menu.style.background = 'transparent';
+      menu.style.alignItems = 'flex-end';
+    });
+
+    // Simple form handling (fake submit)
+    const form = document.getElementById('contactForm');
+    const success = document.getElementById('successMsg');
+    form && form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Simula envio e exibe mensagem de sucesso
+      success.style.display = 'block';
+      form.reset();
+      setTimeout(() => success.style.display = 'none', 7000);
+    });
+
+    // Small accessibility improvement: focus outline visible on keyboard navigation
+    document.body.addEventListener('keyup', (e)=>{
+      if(e.key === 'Tab') document.documentElement.style.setProperty('--focus', '2px solid #0b8f82');
+    });
+  </script>
+</body>
+</html>
