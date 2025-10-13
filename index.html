@@ -1,80 +1,303 @@
 
-<!-- Modal histórico atualizado -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Saúde Inteligente</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+    color: #333;
+  }
+
+  header {
+    background: linear-gradient(135deg, #15803d, #166534); /* verde mais escuro */
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* título à esquerda */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 700;
+  }
+  header p {
+    margin: 5px 0 0 0;
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  main.container {
+    padding: 30px 20px;
+    max-width: 1000px;
+    margin: auto;
+    position: relative;
+  }
+
+  .card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    margin-top: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+  }
+
+  #map {
+    height: 450px;
+    border-radius: 12px;
+    border: 2px solid #16a34a;
+    margin-top: 15px;
+  }
+
+  /* Botão histórico */
+  #historyBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  #historyBtn:hover { background-color: #138d3e; }
+
+  /* Modal contato e histórico */
+  .modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .modal.show { display: flex; opacity: 1; }
+
+  .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal.show .modal-content { transform: translateY(0); }
+
+  .modal-content input, .modal-content textarea {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease;
+  }
+  .modal-content input:focus, .modal-content textarea:focus {
+    border-color: #16a34a;
+    outline: none;
+  }
+
+  .modal-content button {
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 15px;
+    width: 100%;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  .modal-content button:hover { background-color: #138d3e; transform: scale(1.02); }
+
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+    color: #888;
+    transition: color 0.3s ease;
+  }
+  .close-btn:hover { color: #16a34a; }
+
+  .response-toast {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: #e6f9ed;
+    color: #064e3b;
+    border: 1px solid #a7f3d0;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 10000;
+    font-weight: 500;
+  }
+  .response-toast .close-toast {
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: color 0.3s ease;
+  }
+  .response-toast .close-toast:hover { color: #16a34a; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Saúde Inteligente</h1>
+  <p>Seu portal de bem-estar e cuidados com a saúde</p>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h2>Hospitais próximos</h2>
+    <p>Veja no mapa os hospitais próximos e entre em contato facilmente.</p>
+    <button id="historyBtn" onclick="openHistory()">Histórico</button>
+    <div id="map"></div>
+  </section>
+</main>
+
+<!-- Modal contato -->
+<div id="contactModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h3>Entrar em contato</h3>
+    <form id="contactForm" action="https://formspree.io/f/xkgqvrkk" method="POST">
+      <label>Hospital:</label>
+      <input type="text" id="hospitalName" name="Hospital" readonly />
+      <label>Seu nome:</label>
+      <input type="text" id="userName" name="Nome" required />
+      <label>Seu RG:</label>
+      <input type="text" id="userRG" name="RG" required />
+      <label>Seu e-mail:</label>
+      <input type="email" id="userEmail" name="Email" required />
+      <label>Mensagem:</label>
+      <textarea id="userMessage" name="Mensagem" rows="4" required></textarea>
+      <button type="submit">Enviar mensagem</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal histórico -->
 <div id="historyModal" class="modal">
   <div class="modal-content">
     <span class="close-btn" onclick="closeHistory()">&times;</span>
     <h3>Histórico de mensagens enviadas</h3>
-    
-    <label for="hospitalFilter">Filtrar por hospital:</label>
-    <select id="hospitalFilter" style="width:100%; padding:8px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc;">
-      <option value="all">Todos</option>
-    </select>
-
-    <table style="width:100%; border-collapse:collapse;">
-      <thead>
-        <tr style="background:#f0f4f8;">
-          <th style="text-align:left; padding:8px; border-bottom:1px solid #ddd;">Hospital</th>
-          <th style="text-align:left; padding:8px; border-bottom:1px solid #ddd;">Mensagem</th>
-          <th style="text-align:left; padding:8px; border-bottom:1px solid #ddd;">Data/Hora</th>
-        </tr>
-      </thead>
-      <tbody id="messageHistoryTable"></tbody>
-    </table>
+    <ul id="messageHistory" style="list-style:none; padding-left:0;"></ul>
   </div>
 </div>
 
+<div id="responseToast" class="response-toast">
+  <span id="responseText">Sua mensagem foi recebida!</span>
+  <span class="close-toast" onclick="closeToast()">&times;</span>
+</div>
+
 <script>
-const hospitalFilter = document.getElementById('hospitalFilter');
-const messageHistoryTable = document.getElementById('messageHistoryTable');
+let messageHistoryData = [];
 
+function initMap() {
+  const mapEl = document.getElementById('map');
+  if (!navigator.geolocation) { alert('Geolocalização não suportada.'); return; }
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    const map = L.map(mapEl).setView([latitude, longitude], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    L.marker([latitude, longitude]).addTo(map).bindPopup('Você está aqui!');
+
+    const hospitais = [
+      { nome: "Hospital Central", lat: latitude + 0.01, lng: longitude - 0.005 },
+      { nome: "Clínica Vida Saudável", lat: latitude - 0.008, lng: longitude + 0.004 },
+      { nome: "Pronto Socorro Municipal", lat: latitude + 0.006, lng: longitude + 0.002 }
+    ];
+
+    hospitais.forEach(h => {
+      const marker = L.marker([h.lat, h.lng]).addTo(map);
+      marker.bindPopup(`<b>${h.nome}</b><br><button class='contactBtn'>Entrar em contato</button>`);
+      marker.on('popupopen', e => {
+        const btn = e.popup.getElement().querySelector('.contactBtn');
+        btn.addEventListener('click', () => openModal(h.nome));
+      });
+    });
+  }, () => alert('Não foi possível obter sua localização.'));
+}
+
+const modal = document.getElementById('contactModal');
+const hospitalNameInput = document.getElementById('hospitalName');
+const responseToast = document.getElementById('responseToast');
+const responseText = document.getElementById('responseText');
+
+function openModal(nomeHospital) { hospitalNameInput.value = nomeHospital; modal.classList.add('show'); }
+function closeModal() { modal.classList.remove('show'); }
+function showToast(msg) { responseText.textContent = msg; responseToast.style.display = 'block'; }
+function closeToast() { responseToast.style.display = 'none'; }
+
+// Histórico
+const historyModal = document.getElementById('historyModal');
+const messageHistoryUl = document.getElementById('messageHistory');
 function openHistory() {
-  // Atualiza opções do filtro
-  const uniqueHospitals = [...new Set(messageHistoryData.map(m => m.hospital))];
-  hospitalFilter.innerHTML = `<option value="all">Todos</option>` + uniqueHospitals.map(h => `<option value="${h}">${h}</option>`).join('');
-
-  renderHistoryTable('all');
+  messageHistoryUl.innerHTML = messageHistoryData.map(msg => `<li><strong>${msg.hospital}</strong>: ${msg.mensagem}</li>`).join('');
   historyModal.classList.add('show');
 }
+function closeHistory() { historyModal.classList.remove('show'); }
 
-hospitalFilter.addEventListener('change', () => {
-  renderHistoryTable(hospitalFilter.value);
-});
-
-function renderHistoryTable(filterHospital) {
-  let dataToShow = [...messageHistoryData].reverse(); // mais recente no topo
-  if (filterHospital !== 'all') dataToShow = dataToShow.filter(m => m.hospital === filterHospital);
-
-  messageHistoryTable.innerHTML = dataToShow.map(msg => `
-    <tr>
-      <td style="padding:8px; border-bottom:1px solid #ddd;">${msg.hospital}</td>
-      <td style="padding:8px; border-bottom:1px solid #ddd;">${msg.mensagem}</td>
-      <td style="padding:8px; border-bottom:1px solid #ddd;">${msg.date}</td>
-    </tr>
-  `).join('');
-}
-
-// Ao enviar uma mensagem, adicionamos a data/hora
 document.getElementById('contactForm').addEventListener('submit', e => {
   e.preventDefault();
   const form = e.target;
   const data = new FormData(form);
   const hospital = form.Hospital.value;
   const mensagem = form.Mensagem.value;
-  const now = new Date();
-  const formattedDate = now.toLocaleString();
 
   fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
     .then(response => {
       if(response.ok) {
         form.reset(); closeModal();
         showToast(`Hospital ${hospital} recebeu sua mensagem!`);
-        messageHistoryData.push({ hospital, mensagem, date: formattedDate });
+        messageHistoryData.push({ hospital, mensagem });
       } else { alert('Erro ao enviar mensagem.'); }
     })
     .catch(() => alert('Erro ao enviar mensagem.'));
 });
-</script>
 
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+</body>
+</html>
 
 
 
