@@ -4,395 +4,263 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saúde Inteligente</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<style>
-:root {
-  --verde-claro: #6ee787;
-  --verde-medio: #4cc977;
-  --verde-escuro: #2fad61;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #ffffff;
-  color: #222;
-}
-
-/* Header */
-header {
-  background: linear-gradient(135deg, var(--verde-escuro), var(--verde-medio));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-bottom: 4px solid var(--verde-claro);
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-header .logo-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-header img {
-  height: 55px;
-  width: 55px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 15px rgba(255,255,255,0.6);
-}
-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-header p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #f0f0f0;
-}
-
-/* Hero Section */
-.hero {
-  text-align: center;
-  padding: 40px 20px 10px 20px;
-}
-.hero h2 { color: #2b2b2b; }
-.hero p { color: #444; }
-
-/* Mapa */
-#map {
-  width: 90%;
-  max-width: 1000px;
-  height: 500px;
-  margin: 0 auto 30px auto;
-  border-radius: 16px;
-  border: 3px solid var(--verde-escuro);
-  box-shadow: 0 0 20px rgba(47,173,97,0.25);
-}
-
-/* Cards */
-.cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  justify-content: center;
-  margin-bottom: 60px;
-}
-.card {
-  flex: 1 1 280px;
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 20px;
-  border: 2px solid var(--verde-escuro);
-  box-shadow: 0 0 20px rgba(110,231,135,0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 35px rgba(110,231,135,0.7);
-}
-.card h3 { color: #2b2b2b; }
-.card p { color: #444; }
-
-/* Botão histórico */
-#historyBtn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: linear-gradient(135deg, var(--verde-claro), var(--verde-medio));
-  color: #000;
-  border: 2px solid var(--verde-escuro);
-  padding: 12px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 0 12px rgba(110,231,135,0.8);
-  z-index: 500;
-}
-#historyBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px var(--verde-claro);
-}
-
-/* Modais */
-.modal {
-  position: fixed;
-  top:0; left:0;
-  width: 100%; height: 100%;
-  background: rgba(255,255,255,0.9);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.modal.show { display: flex; opacity: 1; }
-
-.modal-content {
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 480px;
-  position: relative;
-  box-shadow: 0 0 30px rgba(110,231,135,0.6);
-  border: 2px solid var(--verde-escuro);
-  transform: translateY(20px);
-  max-height: 80vh;
-  overflow-y: auto;
-}
-.modal-content input, .modal-content textarea {
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 10px;
-  border: 2px solid #bbb;
-  background: #f9f9f9;
-  color: #222;
-  font-size: 0.95rem;
-}
-.modal-content input:focus, .modal-content textarea:focus {
-  border-color: var(--verde-escuro);
-  outline: none;
-}
-.modal-content button {
-  background: linear-gradient(135deg, var(--verde-claro), var(--verde-medio));
-  color: #000;
-  border: 2px solid var(--verde-escuro);
-  border-radius: 12px;
-  padding: 14px;
-  margin-top: 15px;
-  width: 100%;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
-.modal-content button:hover { 
-  transform: scale(1.03);
-  box-shadow: 0 0 15px var(--verde-claro);
-}
-.close-btn {
-  position: absolute;
-  top: 12px;
-  right: 15px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-.close-btn:hover { color: var(--verde-escuro); }
-
-/* Toast */
-.response-toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #ffffff;
-  color: #222;
-  border: 2px solid var(--verde-escuro);
-  border-radius: 12px;
-  padding: 14px 20px;
-  box-shadow: 0 0 15px rgba(110,231,135,0.6);
-  display: none;
-  z-index: 10000;
-  font-weight: 500;
-  animation: fadeInDown 0.4s ease;
-}
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
 </head>
 <body>
+
 <header>
-  <div class="logo-title">
-    <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" alt="Logo Saúde Inteligente">
-    <div>
-      <h1>Saúde Inteligente</h1>
-      <p>Bem-estar e cuidados com a saúde</p>
-    </div>
-  </div>
+  <h1 style="color:white;">Saúde Inteligente</h1>
 </header>
 
 <section class="hero">
-  <h2>Encontre hospitais próximos</h2>
-  <p>Veja facilmente onde se localizar e entre em contato rapidamente.</p>
+  <h2 id="cityTitle">Encontre hospitais próximos</h2>
+  <p>Role para ver o mapa com hospitais da sua cidade.</p>
 </section>
 
-<div id="map"></div>
-
 <div class="cards-container">
-  <div class="card">
-    <h3>Dica de saúde 1</h3>
-    <p>Manter uma boa alimentação é essencial para prevenir doenças.</p>
-  </div>
-  <div class="card">
-    <h3>Dica de saúde 2</h3>
-    <p>Praticar exercícios regularmente fortalece corpo e mente.</p>
-  </div>
-  <div class="card">
-    <h3>Dica de saúde 3</h3>
-    <p>Consultar médicos regularmente ajuda a detectar problemas cedo.</p>
-  </div>
+  <div class="card"><h3>Dica de saúde 1</h3><p>Alimente-se bem.</p></div>
+  <div class="card"><h3>Dica de saúde 2</h3><p>Pratique exercícios.</p></div>
+  <div class="card"><h3>Dica de saúde 3</h3><p>Faça consultas regulares.</p></div>
 </div>
+
+<section class="map-section" id="mapSection">
+  <div id="map"></div>
+</section>
 
 <button id="historyBtn" onclick="openHistory()">Histórico</button>
 
-<!-- Modais -->
+<!-- MODAL CONTATO -->
 <div id="contactModal" class="modal">
   <div class="modal-content">
-    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <span onclick="closeModal()" class="close-button">&times;</span>
     <h3>Entrar em contato</h3>
+    
     <form id="contactForm" action="https://formspree.io/f/saude-inteligente" method="POST">
       <label>Hospital:</label>
       <input type="text" id="hospitalName" name="Hospital" readonly />
-      
-      <label>Seu nome:</label>
-      <input type="text" id="userName" name="Nome" required />
-      
-      <label>Seu CPF:</label>
-      <input type="text" id="userCPF" name="CPF" required />
-      
-      <label>Seu e-mail:</label>
-      <input type="email" id="userEmail" name="Email" required />
-      
+
+      <label>Nome:</label>
+      <input type="text" name="Nome" required />
+
+      <label>CPF:</label>
+      <input type="text" name="CPF" required />
+
+      <label>Email:</label>
+      <input type="email" name="Email" required />
+
       <label>Mensagem:</label>
-      <textarea id="userMessage" name="Mensagem" rows="4" required></textarea>
-      
-      <button type="submit">Enviar mensagem</button>
+      <textarea name="Mensagem" required></textarea>
+
+      <button type="submit">Enviar</button>
     </form>
   </div>
 </div>
 
+<!-- MODAL HISTÓRICO -->
 <div id="historyModal" class="modal">
   <div class="modal-content">
-    <span class="close-btn" onclick="closeHistory()">&times;</span>
-    <h3>Histórico de mensagens enviadas</h3>
-    <ul id="messageHistory" style="list-style:none; padding-left:0;"></ul>
+    <span onclick="closeHistory()" class="close-button">&times;</span>
+    <h3>Histórico de mensagens</h3>
+    <ul id="messageHistory"></ul>
   </div>
 </div>
 
-<div id="responseToast" class="response-toast"><span id="responseText"></span></div>
+<div id="responseToast" class="response-toast">
+  <span id="responseText"></span>
+</div>
 
 <script>
 let messageHistoryData = [];
 
-function offsetLatLng(lat, lng, metersNorth, metersEast) {
-    const R = 6378137;
-    const dLat = metersNorth / R;
-    const dLng = metersEast / (R * Math.cos(Math.PI * lat / 180));
-    return { lat: lat + dLat * (180/Math.PI), lng: lng + dLng * (180/Math.PI) };
+let map;
+let userMarker;
+let accuracyCircle;
+let hospitalMarkers = [];
+
+async function fetchHospitals(lat, lon) {
+  const radius = 10000;
+  const query = `[out:json][timeout:25];
+(
+  node["amenity"="hospital"](around:${radius},${lat},${lon});
+  way["amenity"="hospital"](around:${radius},${lat},${lon});
+  relation["amenity"="hospital"](around:${radius},${lat},${lon});
+);
+out center;`;
+
+  const res = await fetch('https://overpass-api.de/api/interpreter', {
+    method: 'POST',
+    body: query
+  });
+
+  const data = await res.json();
+
+  return data.elements.map(el => {
+    const nome = el.tags && el.tags.name ? el.tags.name : 'Hospital';
+    const latlng = el.type === 'node' ? [el.lat, el.lon] : [el.center.lat, el.center.lon];
+    return { nome, lat: latlng[0], lng: latlng[1] };
+  });
+}
+
+function clearHospitalMarkers() {
+  hospitalMarkers.forEach(m => map.removeLayer(m));
+  hospitalMarkers = [];
+}
+
+function renderHospitals(lista) {
+  clearHospitalMarkers();
+  lista.forEach(h => {
+    const marker = L.marker([h.lat, h.lng]).addTo(map);
+    marker.bindPopup(`
+      <b>${h.nome}</b><br>
+      <button class='contactBtn' data-hospital="${h.nome}">Entrar em contato</button>
+    `);
+
+    marker.on("popupopen", e => {
+      const btn = e.popup.getElement().querySelector(".contactBtn");
+      if (btn) btn.onclick = () => openModal(btn.dataset.hospital);
+    });
+
+    hospitalMarkers.push(marker);
+  });
+}
+
+function updateUserLocation(pos) {
+  const { latitude, longitude, accuracy } = pos.coords;
+  const latlng = [latitude, longitude];
+
+  if (!userMarker) userMarker = L.marker(latlng).addTo(map);
+  else userMarker.setLatLng(latlng);
+
+  if (!accuracyCircle)
+    accuracyCircle = L.circle(latlng, {
+      radius: accuracy,
+      color: '#2fad61',
+      fillColor: '#6ee787',
+      fillOpacity: 0.2
+    }).addTo(map);
+  else
+    accuracyCircle.setLatLng(latlng).setRadius(accuracy);
+}
+
+async function updateCityAndHospitals(lat, lon) {
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=pt-BR`);
+    const j = await r.json();
+    const city = j.address.city || j.address.town || j.address.village || j.address.municipality || 'sua cidade';
+    document.getElementById('cityTitle').textContent = `Encontre hospitais próximos em ${city}`;
+  } catch {}
+
+  try {
+    const lista = await fetchHospitals(lat, lon);
+    if (lista.length) renderHospitals(lista);
+  } catch {}
 }
 
 function initMap() {
-  const mapEl = document.getElementById('map');
-  if (!navigator.geolocation) { alert('Geolocalização não suportada.'); return; }
+  map = L.map('map').setView([-23.4273, -51.9375], 13);
 
-  navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude, longitude } = pos.coords;
-    const map = L.map(mapEl).setView([latitude, longitude], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-    L.marker([latitude, longitude]).addTo(map).bindPopup('Você está aqui!');
-
-    const hospitais = [
-      { nome: "Hospital Central", offsetN: 300, offsetE: -200 },
-      { nome: "Clínica Vida Saudável", offsetN: -400, offsetE: 150 },
-      { nome: "Pronto Socorro Municipal", offsetN: 200, offsetE: 100 }
-    ];
-
-    hospitais.forEach(h => {
-      const pos = offsetLatLng(latitude, longitude, h.offsetN, h.offsetE);
-      const marker = L.marker([pos.lat, pos.lng]).addTo(map);
-      marker.bindPopup(`<b>${h.nome}</b><br><button class='contactBtn'>Entrar em contato</button>`);
-      marker.on('popupopen', e => {
-        const btn = e.popup.getElement().querySelector('.contactBtn');
-        btn.addEventListener('click', () => openModal(h.nome));
-      });
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
+      map.setView([latitude, longitude], 13);
+      updateUserLocation(pos);
+      updateCityAndHospitals(latitude, longitude);
+    }, () => {
+      updateCityAndHospitals(-23.4273, -51.9375);
     });
-  }, () => alert('Não foi possível obter sua localização.'));
+
+    navigator.geolocation.watchPosition(updateUserLocation, null, {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 10000
+    });
+  } else {
+    updateCityAndHospitals(-23.4273, -51.9375);
+  }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadHistory();
+  initMap();
+});
 
 const modal = document.getElementById('contactModal');
 const hospitalNameInput = document.getElementById('hospitalName');
-const responseToast = document.getElementById('responseToast');
-const responseText = document.getElementById('responseText');
 
-function openModal(nomeHospital) { hospitalNameInput.value = nomeHospital; modal.classList.add('show'); }
-function closeModal() { modal.classList.remove('show'); }
-function showToast(msg) { responseText.textContent = msg; responseToast.style.display = 'block'; setTimeout(closeToast, 4000); }
-function closeToast() { responseToast.style.display = 'none'; }
+function openModal(nome) {
+  hospitalNameInput.value = nome;
+  modal.classList.add('show');
+}
+function closeModal() {
+  modal.classList.remove('show');
+}
 
 const historyModal = document.getElementById('historyModal');
-const messageHistoryUl = document.getElementById('messageHistory');
 
 function openHistory() {
-  messageHistoryUl.innerHTML = messageHistoryData.map(msg => `<li><strong>${msg.hospital}</strong> (${msg.hora}): ${msg.mensagem}</li>`).join('');
+  const ul = document.getElementById('messageHistory');
+  ul.innerHTML = messageHistoryData
+    .map(msg => `<li><b>${msg.hospital}</b> — ${msg.hora}<br>${msg.mensagem}</li>`)
+    .join("");
+
   historyModal.classList.add('show');
 }
-function closeHistory() { historyModal.classList.remove('show'); }
+function closeHistory() {
+  historyModal.classList.remove('show');
+}
 
-function saveHistory() { localStorage.setItem('messageHistory', JSON.stringify(messageHistoryData)); }
-function loadHistory() { const saved = localStorage.getItem('messageHistory'); if (saved) messageHistoryData = JSON.parse(saved); }
+function showToast(msg) {
+  responseText.textContent = msg;
+  responseToast.style.display = "block";
+  setTimeout(() => responseToast.style.display = "none", 4000);
+}
 
-document.getElementById('contactForm').addEventListener('submit', e => {
+function saveHistory() {
+  localStorage.setItem("history", JSON.stringify(messageHistoryData));
+}
+function loadHistory() {
+  const d = localStorage.getItem("history");
+  if (d) messageHistoryData = JSON.parse(d);
+}
+
+document.getElementById("contactForm").addEventListener("submit", e => {
   e.preventDefault();
   const form = e.target;
   const data = new FormData(form);
-  const hospital = form.Hospital.value;
-  const mensagem = form.Mensagem.value;
-  const hora = new Date().toLocaleString('pt-BR');
 
-  fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
-    .then(response => {
-      if(response.ok) {
-        form.reset(); closeModal();
-        showToast(`Hospital ${hospital} recebeu sua mensagem!`);
-        messageHistoryData.push({ hospital, mensagem, hora });
+  const mensagem = data.get("Mensagem");
+  const hospital = data.get("Hospital");
+  const hora = new Date().toLocaleString("pt-BR");
+
+  fetch(form.action, { method: "POST", body: data })
+    .then(r => {
+      if (r.ok) {
+        messageHistoryData.push({ mensagem, hospital, hora });
         saveHistory();
-      } else { showToast('Erro ao enviar mensagem.'); }
-    })
-    .catch(() => showToast('Erro ao enviar mensagem.'));
+        form.reset();
+        closeModal();
+        showToast("Mensagem enviada!");
+      } else {
+        showToast("Erro ao enviar.");
+      }
+    });
 });
-
-document.addEventListener('DOMContentLoaded', () => { loadHistory(); initMap(); });
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
